@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin
+spec:
+  selector:
+   matchLabels:
+    app: pgadmin
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+
+        - name: pgadmin4
+          image: dpage/pgadmin4
+          env:
+           - name: PGADMIN_DEFAULT_EMAIL
+             value: admin@pgadmin.com
+           - name: PGADMIN_DEFAULT_PASSWORD
+             value: admin
+           - name: PGADMIN_PORT
+             value: "80"
+          ports:
+            - containerPort: 80
+              name: pgadminport
+
+---
+apiVersion: v1	
+kind: Service	
+metadata:	
+  name: pgadmin
+spec:	
+  ports:	
+  - port: 80	
+    targetPort: 80
+  type: LoadBalancer
+  selector:	
+    app: pgadmin
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pgadmin
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: "pgadmin.com"
+    http:
+      paths:
+      - backend:
+          service:
+            name: pgadmin
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+
+#local host dosyasına traefik LoadBlancer_IP pgadmin.com yaz.

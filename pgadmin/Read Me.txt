@@ -1,0 +1,14 @@
+#Cluster'a chart üzerinden nginx yada traefik kur.
+
+kubectl apply -f .\postgres-workload.yaml
+
+kubectl apply -f .\pgadmin-workload.yaml      -->(şifreleri tırnaktan kaldır.)
+
+kubectl get all
+
+kubectl port-forward service/pgadmin 8080:80
+VEYA
+kubectl expose pod/pgadmin-56b7fb98c5-h68m6
+kubectl expose svc pgadmin
+
+#host dosyasına <LoadBalancer_IP> pgadmin.com yaz.
